@@ -1,9 +1,9 @@
-import React, {useState, useEffect, useMemo} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import useStyles from './styles';
-import {Button} from "@blueprintjs/core";
+import {Button, Slider} from "@blueprintjs/core";
 import ColorPicker from "./ColorPicker/ColorPicker";
 
-const modes = {DRAW: 0, FILL: 1};
+const modes = {DRAW: 'draw', FILL: 'fill'};
 
 const Canvas = () => {
     const canvasRef = React.useRef(null);
@@ -15,19 +15,22 @@ const Canvas = () => {
     const [state, update] = useState({
         mousePressed: false,
         strokeStyle: 'red',
-        lineWidth: 10,
+        lineWidth: 1,
         lineJoin: 'round',
-        mode: modes.DRAW
+        mode: modes.DRAW,
     });
 
     function setMode(mode) {
         update({...state, mode});
+
+        console.log("Change mode...");
     }
 
-    function setWidth() {
+    function setWidth(width = 1) {
         const canvas = canvasRef.current.getContext('2d');
-        canvas.strokeStyle = 'blue';
-        canvas.lineWidth = 1;
+        canvas.lineWidth = width;
+
+        update({...state, lineWidth: width});
     }
 
     function setColor(color) {
@@ -62,6 +65,29 @@ const Canvas = () => {
             mousePressed = false;
         });
     }, []);
+
+    // On fill click
+    const onCanvasClick = useCallback(event => {
+        if (modes.FILL === state.mode) {
+            const ctx = canvasRef.current.getContext('2d');
+            const p = ctx.getImageData(event.offsetX, event.offsetY, 1, 1).data;
+
+            console.log("Pixel: ", p);
+        }
+    }, [state.mode]);
+
+    // const onCanvasMousedown = useCallback(e => {
+    //     mousePressed = true;
+    //     draw(e.pageX - offset(this).left, e.pageY - offset(this).top, false);
+    // }, []);
+
+    // Set event listener for filler
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        ctx = canvasRef.current.getContext("2d");
+        canvas.addEventListener('click', onCanvasClick);
+        return () => canvas.removeEventListener('click', onCanvasClick)
+    }, [state.mode]);
 
     function draw(x, y, isDown) {
         if (isDown) {
@@ -98,6 +124,17 @@ const Canvas = () => {
             text="1px"
             onClick={() => setWidth()}
         />
+        <div style={{width: 300}}>
+            <Slider
+                initialValue={1}
+                stepSize={1}
+                onChange={val => setWidth(val)}
+                min={1}
+                max={20}
+                value={state.lineWidth}
+            />
+        </div>
+
         <ColorPicker onClick={setColor}/>
     </>;
 };
