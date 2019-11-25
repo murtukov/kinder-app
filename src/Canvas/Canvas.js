@@ -1,10 +1,12 @@
 import React, {useState, useEffect, useMemo} from 'react';
 import useStyles from './styles';
 import {Button} from "@blueprintjs/core";
+import ColorPicker from "./ColorPicker/ColorPicker";
 
 const modes = {DRAW: 0, FILL: 1};
 
 const Canvas = () => {
+    const canvasRef = React.useRef(null);
     let mousePressed = false;
     let lastX, lastY;
     let ctx;
@@ -23,11 +25,18 @@ const Canvas = () => {
     }
 
     function setWidth() {
-        update({...state, lineWidth: 1, strokeStyle: 'blue'});
+        const canvas = canvasRef.current.getContext('2d');
+        canvas.strokeStyle = 'blue';
+        canvas.lineWidth = 1;
+    }
+
+    function setColor(color) {
+        const canvas = canvasRef.current.getContext('2d');
+        canvas.strokeStyle = color;
     }
 
     useEffect(() => {
-        const canvas = document.getElementById('myCanvas');
+        const canvas = canvasRef.current;
         ctx = canvas.getContext("2d");
         ctx.strokeStyle = state.strokeStyle;
         ctx.lineWidth = state.lineWidth;
@@ -68,9 +77,13 @@ const Canvas = () => {
     }
 
     return <>
-        {useMemo(() =>
-            <canvas id="myCanvas" className={c.canvas} width="500" height="200" />, []
-        )}
+        <canvas
+            id="myCanvas"
+            ref={canvasRef}
+            className={c.canvas}
+            width="500"
+            height="200"
+        />
         <Button
             text="Draw"
             icon="draw"
@@ -85,6 +98,7 @@ const Canvas = () => {
             text="1px"
             onClick={() => setWidth()}
         />
+        <ColorPicker onClick={setColor}/>
     </>;
 };
 
