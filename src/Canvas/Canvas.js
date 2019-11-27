@@ -1,58 +1,47 @@
-import React, {useState, useEffect, useCallback} from 'react';
-import useStyles from './styles';
+import React, {Component} from 'react';
+import styles from './styles';
 import {Button, Slider} from "@blueprintjs/core";
 import ColorPicker from "./ColorPicker/ColorPicker";
+import withStyles from 'react-jss';
 
 const modes = {DRAW: 'draw', FILL: 'fill'};
 
-const Canvas = () => {
-    const canvasRef = React.useRef(null);
-    let mousePressed = false;
-    let lastX, lastY;
-    let ctx;
+let mousePressed = false;
+let lastX, lastY;
 
-    const c = useStyles();
-    const [state, update] = useState({
+class Canvas extends Component {
+    state = {
         mousePressed: false,
         strokeStyle: 'red',
         lineWidth: 1,
         lineJoin: 'round',
         mode: modes.DRAW,
-    });
+        ctx: null
+    };
 
-    function setMode(mode) {
-        update({...state, mode});
-
-        console.log("Change mode...");
+    constructor(props) {
+        super(props);
+        this.canvasRef = React.createRef();
     }
 
-    function setWidth(width = 1) {
-        const canvas = canvasRef.current.getContext('2d');
-        canvas.lineWidth = width;
+    componentDidMount() {
+        const canvas = this.canvasRef.current;
+        const ctx = canvas.getContext("2d");
+        ctx.strokeStyle = this.state.strokeStyle;
+        ctx.lineWidth = this.state.lineWidth;
+        ctx.lineJoin = this.state.lineJoin;
 
-        update({...state, lineWidth: width});
-    }
-
-    function setColor(color) {
-        const canvas = canvasRef.current.getContext('2d');
-        canvas.strokeStyle = color;
-    }
-
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        ctx = canvas.getContext("2d");
-        ctx.strokeStyle = state.strokeStyle;
-        ctx.lineWidth = state.lineWidth;
-        ctx.lineJoin = state.lineJoin;
-
-        canvas.addEventListener('mousedown', function(e) {
+        canvas.addEventListener('mousedown', e => {
             mousePressed = true;
-            draw(e.pageX - offset(this).left, e.pageY - offset(this).top, false);
+
+            if (modes.DRAW === this.state.mode) {
+                this.draw(e.pageX - offset(e.target).left, e.pageY - offset(e.target).top, false);
+            }
         });
 
-        canvas.addEventListener('mousemove', function(e) {
-            if (mousePressed) {
-                draw(e.pageX - offset(this).left, e.pageY - offset(this).top, true);
+        canvas.addEventListener('mousemove', e => {
+            if (mousePressed && modes.DRAW === this.state.mode) {
+                this.draw(e.pageX - offset(e.target).left, e.pageY - offset(e.target).top, true);
             }
         });
 
@@ -61,35 +50,13 @@ const Canvas = () => {
             let imgd = ctx.getImageData(0, 0, 1, 1);
         });
 
-        canvas.addEventListener('mouseleave', e => {
-            mousePressed = false;
-        });
-    }, []);
+        canvas.addEventListener('mouseleave', () => mousePressed = false);
+        canvas.addEventListener('click', this.onFillClick);
+    }
 
-    // On fill click
-    const onCanvasClick = useCallback(event => {
-        if (modes.FILL === state.mode) {
-            const ctx = canvasRef.current.getContext('2d');
-            const p = ctx.getImageData(event.offsetX, event.offsetY, 1, 1).data;
+    draw(x, y, isDown) {
+        const ctx = this.canvasRef.current.getContext("2d");
 
-            console.log("Pixel: ", p);
-        }
-    }, [state.mode]);
-
-    // const onCanvasMousedown = useCallback(e => {
-    //     mousePressed = true;
-    //     draw(e.pageX - offset(this).left, e.pageY - offset(this).top, false);
-    // }, []);
-
-    // Set event listener for filler
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        ctx = canvasRef.current.getContext("2d");
-        canvas.addEventListener('click', onCanvasClick);
-        return () => canvas.removeEventListener('click', onCanvasClick)
-    }, [state.mode]);
-
-    function draw(x, y, isDown) {
         if (isDown) {
             ctx.beginPath();
             ctx.moveTo(lastX, lastY);
@@ -102,42 +69,137 @@ const Canvas = () => {
         lastY = y;
     }
 
-    return <>
-        <canvas
-            id="myCanvas"
-            ref={canvasRef}
-            className={c.canvas}
-            width="500"
-            height="200"
-        />
-        <Button
-            text="Draw"
-            icon="draw"
-            onClick={() => setMode(modes.DRAW)}
-        />
-        <Button
-            text="Fill"
-            icon="tint"
-            onClick={() => setMode(modes.FILL)}
-        />
-        <Button
-            text="1px"
-            onClick={() => setWidth()}
-        />
-        <div style={{width: 300}}>
-            <Slider
-                initialValue={1}
-                stepSize={1}
-                onChange={val => setWidth(val)}
-                min={1}
-                max={20}
-                value={state.lineWidth}
-            />
-        </div>
+    setMode(mode) {
+        this.setState({...this.state, mode});
+        console.log("Change mode...");
+    }
 
-        <ColorPicker onClick={setColor}/>
-    </>;
-};
+    setWidth(width = 1) {
+        const canvas = this.canvasRef.current.getContext('2d');
+        canvas.lineWidth = width;
+
+        this.setState({...this.state, lineWidth: width});
+    }
+
+    setColor = (color) => {
+        const canvas = this.canvasRef.current.getContext('2d');
+        canvas.strokeStyle = color;
+    };
+
+    clear = () => {
+        const canvas = this.canvasRef.current.getContext('2d');
+        canvas.clearRect(0, 0, 500, 200)
+    };
+
+    onFillClick = (e) => {
+        if (modes.FILL === this.state.mode) {
+            const region = {};
+            const pixelsToCheck = {};
+
+            const ctx = this.canvasRef.current.getContext('2d');
+            // Get color of seed pixel
+            const seedPxl = ctx.getImageData(e.offsetX, e.offsetY, 1, 1).data;
+            // Return 4 adjacent pixels from given seed pixel
+            const pixels = this.getAdjacentPixels(ctx, e.offsetX, e.offsetY);
+
+            region[`${e.offsetX}${e.offsetY}`] = {
+                color: seedPxl,
+                coords: {x: e.offsetX, y: e.offsetY}
+            };
+
+            for (let i in pixels) {
+                if (this.sameColor(pixels[i].color, seedPxl)) {
+                    // maybe simplify this to hold only coords
+                    region[`${pixels[i].coords.x}${pixels[i].coords.y}`] = pixels[i];
+                    pixelsToCheck[`${pixels[i].coords.x}${pixels[i].coords.y}`] = pixels[i];
+                }
+            }
+
+
+            this.test(pixelsToCheck);
+
+            this.fillRegion(region);
+        }
+    };
+
+    test(pixelsToCheck) {
+
+    }
+
+    fillRegion(region) {
+        const ctx = this.canvasRef.current.getContext('2d');
+
+        for (let i in region) {
+            ctx.fillStyle = "yellow";
+            ctx.fillRect(region[i].coords.x, region[i].coords.y, 1, 1);
+        }
+    }
+
+    getAdjacentPixels(ctx, x, y) {
+        return {
+            top: {
+                color: ctx.getImageData(x, y+1, 1, 1).data,
+                coords: {x, y: y+1}
+            },
+            right: {
+                color: ctx.getImageData(x+1, y, 1, 1).data,
+                coords: {x: x+1, y}
+            },
+            bottom: {
+                color: ctx.getImageData(x, y-1, 1, 1).data,
+                coords: {x, y: y-1}
+            },
+            left: {
+                color: ctx.getImageData(x-1, y, 1, 1).data,
+                coords: {x: x-1, y}
+            }
+        };
+    }
+
+    sameColor(first, second) {
+        return (first[0] === second[0] && first[1] === second[1] && first[2] === second[2] && first[3] === second[3]);
+    }
+
+    render() {
+        const {classes: c} = this.props;
+
+        return <>
+            <canvas
+                id="myCanvas"
+                ref={this.canvasRef}
+                className={c.canvas}
+                width="500"
+                height="200"
+            />
+            <Button
+                text="Draw"
+                icon="draw"
+                onClick={() => this.setMode(modes.DRAW)}
+            />
+            <Button
+                text="Fill"
+                icon="tint"
+                onClick={() => this.setMode(modes.FILL)}
+            />
+            <Button
+                text="Clear"
+                onClick={this.clear}
+            />
+            <div style={{width: 300}}>
+                <Slider
+                    initialValue={1}
+                    stepSize={1}
+                    onChange={val => this.setWidth(val)}
+                    min={1}
+                    max={20}
+                    value={this.state.lineWidth}
+                />
+            </div>
+
+            <ColorPicker onClick={this.setColor}/>
+        </>;
+    }
+}
 
 function offset(el) {
     const rect = el.getBoundingClientRect();
@@ -148,4 +210,4 @@ function offset(el) {
     }
 }
 
-export default Canvas;
+export default withStyles(styles)(Canvas);

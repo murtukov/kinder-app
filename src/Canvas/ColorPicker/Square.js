@@ -1,10 +1,9 @@
 import React from 'react';
-import useStyles from "../styles";
+import withStyles from "react-jss";
+import styles from "../styles";
 
-const Square = ({color}) => {
-    const c = useStyles();
-
+const Square = ({classes: c, color}) => {
     return <div className={c.square} style={{backgroundColor: color}}/>;
 };
 
-export default Square;
+export default withStyles(styles)(Square);

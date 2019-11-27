@@ -1,11 +1,10 @@
-import {createUseStyles} from "react-jss";
-
-export default createUseStyles({
+export default {
     canvas: {
-        border: '1px solid black'
+        border: '1px solid black',
+        cursor: 'pointer'
     },
     square: {
         width: 20,
         height: 20
     }
-});
+}
