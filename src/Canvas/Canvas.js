@@ -105,34 +105,33 @@ class Canvas extends Component {
 
             region[`${seedPxl.coords.x}${seedPxl.coords.y}`] = seedPxl;
 
-            this.growRecursive(seedPxl, region, pixelsToCheck, ctx, seedPxl.color);
+            this.growRegion(seedPxl, region, pixelsToCheck, ctx, seedPxl.color);
 
             this.fillRegion(region);
         }
     };
 
-    growRecursive(seedPxl, region, pixelsToCheck, ctx, color) {
-        // Return 4 adjacent pixels from given seed pixel
-        const pixels = this.getAdjacentPixels(ctx, seedPxl.coords.x, seedPxl.coords.y);
+    growRegion(seedPxl, region, pixelsToCheck, ctx, color) {
+        while (true) {
+            // Return 4 adjacent pixels from given seed pixel
+            const pixels = this.getAdjacentPixels(ctx, seedPxl.coords.x, seedPxl.coords.y);
 
-        for (let i in pixels) {
-            // If pixels are already in the region
-            if (region[`${pixels[i].coords.x}${pixels[i].coords.y}`]) {
-                continue;
+            for (let i in pixels) {
+                // If pixels are already in the region
+                if (region[`${pixels[i].coords.x}${pixels[i].coords.y}`]) {
+                    continue;
+                }
+
+                if (this.sameColor(pixels[i].color, color)) {
+                    // maybe simplify this to hold only coords
+                    region[`${pixels[i].coords.x}${pixels[i].coords.y}`] = pixels[i];
+                    pixelsToCheck[`${pixels[i].coords.x}${pixels[i].coords.y}`] = pixels[i];
+                }
             }
 
-            if (this.sameColor(pixels[i].color, color)) {
-                // maybe simplify this to hold only coords
-                region[`${pixels[i].coords.x}${pixels[i].coords.y}`] = pixels[i];
-                pixelsToCheck[`${pixels[i].coords.x}${pixels[i].coords.y}`] = pixels[i];
-            }
-        }
+            seedPxl = this.popPixel(pixelsToCheck);
 
-        while(true) {
-            const pixel = this.popPixel(pixelsToCheck);
-            if (pixel) {
-                this.growRecursive(pixel, region, pixelsToCheck, ctx, color);
-            } else {
+            if (!seedPxl) {
                 break;
             }
         }
