@@ -98,32 +98,54 @@ class Canvas extends Component {
 
             const ctx = this.canvasRef.current.getContext('2d');
             // Get color of seed pixel
-            const seedPxl = ctx.getImageData(e.offsetX, e.offsetY, 1, 1).data;
-            // Return 4 adjacent pixels from given seed pixel
-            const pixels = this.getAdjacentPixels(ctx, e.offsetX, e.offsetY);
-
-            region[`${e.offsetX}${e.offsetY}`] = {
-                color: seedPxl,
+            const seedPxl = {
+                color: ctx.getImageData(e.offsetX, e.offsetY, 1, 1).data,
                 coords: {x: e.offsetX, y: e.offsetY}
             };
 
-            for (let i in pixels) {
-                if (this.sameColor(pixels[i].color, seedPxl)) {
-                    // maybe simplify this to hold only coords
-                    region[`${pixels[i].coords.x}${pixels[i].coords.y}`] = pixels[i];
-                    pixelsToCheck[`${pixels[i].coords.x}${pixels[i].coords.y}`] = pixels[i];
-                }
-            }
+            region[`${seedPxl.coords.x}${seedPxl.coords.y}`] = seedPxl;
 
-
-            this.test(pixelsToCheck);
+            this.growRecursive(seedPxl, region, pixelsToCheck, ctx, seedPxl.color);
 
             this.fillRegion(region);
         }
     };
 
-    test(pixelsToCheck) {
+    growRecursive(seedPxl, region, pixelsToCheck, ctx, color) {
+        // Return 4 adjacent pixels from given seed pixel
+        const pixels = this.getAdjacentPixels(ctx, seedPxl.coords.x, seedPxl.coords.y);
 
+        for (let i in pixels) {
+            // If pixels are already in the region
+            if (region[`${pixels[i].coords.x}${pixels[i].coords.y}`]) {
+                continue;
+            }
+
+            if (this.sameColor(pixels[i].color, color)) {
+                // maybe simplify this to hold only coords
+                region[`${pixels[i].coords.x}${pixels[i].coords.y}`] = pixels[i];
+                pixelsToCheck[`${pixels[i].coords.x}${pixels[i].coords.y}`] = pixels[i];
+            }
+        }
+
+        while(true) {
+            const pixel = this.popPixel(pixelsToCheck);
+            if (pixel) {
+                this.growRecursive(pixel, region, pixelsToCheck, ctx, color);
+            } else {
+                break;
+            }
+        }
+    }
+
+    popPixel(objectCollection) {
+        for (let i in objectCollection) {
+            const pixel = objectCollection[i];
+            delete objectCollection[i];
+            return pixel;
+        }
+
+        return false;
     }
 
     fillRegion(region) {
