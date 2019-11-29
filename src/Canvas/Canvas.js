@@ -10,9 +10,12 @@ let mousePressed = false;
 let lastX, lastY;
 
 class Canvas extends Component {
+    static width = 500;
+    static height = 300;
+
     state = {
         mousePressed: false,
-        strokeStyle: 'red',
+        strokeStyle: 'black',
         lineWidth: 1,
         lineJoin: 'round',
         mode: modes.DRAW,
@@ -24,9 +27,14 @@ class Canvas extends Component {
         this.canvasRef = React.createRef();
     }
 
-    componentDidMount() {
+    componentDidMount() { console.log("Mount");
         const canvas = this.canvasRef.current;
         const ctx = canvas.getContext("2d");
+
+        // Set background color
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
         ctx.strokeStyle = this.state.strokeStyle;
         ctx.lineWidth = this.state.lineWidth;
         ctx.lineJoin = this.state.lineJoin;
@@ -87,8 +95,9 @@ class Canvas extends Component {
     };
 
     clear = () => {
-        const canvas = this.canvasRef.current.getContext('2d');
-        canvas.clearRect(0, 0, 500, 200)
+        const ctx = this.canvasRef.current.getContext('2d');
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, this.canvasRef.current.width, this.canvasRef.current.height);
     };
 
     onFillClick = (e) => {
@@ -103,9 +112,10 @@ class Canvas extends Component {
                 coords: {x: e.offsetX, y: e.offsetY}
             };
 
-            region[`${seedPxl.coords.x}${seedPxl.coords.y}`] = seedPxl.coords;
+            region[( seedPxl.coords.y << 16 ) ^ seedPxl.coords.x] = seedPxl.coords;
 
             this.growRegion(seedPxl, region, pixelsToCheck, ctx, seedPxl.color);
+            console.log("Region", region);
             this.fillRegion(region);
         }
     };
@@ -115,11 +125,11 @@ class Canvas extends Component {
             const pixels = this.getAdjacentPixels(ctx, seedPxl.coords.x, seedPxl.coords.y, color);
 
             for (let pxl of pixels) {
-                const key = `${pxl.coords.x}${pxl.coords.y}`;
+                const key = ( pxl.coords.y << 16 ) ^ pxl.coords.x;
 
                 if (region[key] === undefined) {
                     region[key] = pxl.coords;
-                    pixelsToCheck.push(pxl);
+                    pixelsToCheck[pixelsToCheck.length] = pxl;
                 }
             }
 
@@ -142,13 +152,13 @@ class Canvas extends Component {
 
         for (let i = 4; i < 35; i += 8) {
             if (data[i] === color[0] && data[i+1] === color[1] && data[i+2] === color[2]) {
-                result.push({
+                result[result.length] = {
                     color: [data[i], data[i+1], data[i+2]],
                     coords: {
                         x: i === 12 ? x-1 : (i === 20 ? x+1: x),
                         y: i < 12 ? y-1 : (i > 23 ? y+1 : y),
                     }
-                });
+                };
             }
         }
 
@@ -163,8 +173,8 @@ class Canvas extends Component {
                 id="myCanvas"
                 ref={this.canvasRef}
                 className={c.canvas}
-                width="500"
-                height="200"
+                width={Canvas.width}
+                height={Canvas.height}
             />
             <Button
                 text="Draw"
