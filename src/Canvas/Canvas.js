@@ -94,7 +94,7 @@ class Canvas extends Component {
     onFillClick = (e) => {
         if (modes.FILL === this.state.mode) {
             const region = {};
-            const pixelsToCheck = {};
+            const pixelsToCheck = [];
 
             const ctx = this.canvasRef.current.getContext('2d');
             // Get color of seed pixel
@@ -103,82 +103,64 @@ class Canvas extends Component {
                 coords: {x: e.offsetX, y: e.offsetY}
             };
 
-            region[`${seedPxl.coords.x}${seedPxl.coords.y}`] = seedPxl;
+            region[`${seedPxl.coords.x}${seedPxl.coords.y}`] = seedPxl.coords;
 
             this.growRegion(seedPxl, region, pixelsToCheck, ctx, seedPxl.color);
+            console.log("Region grown", Object.keys(region).length);
 
             this.fillRegion(region);
         }
     };
 
     growRegion(seedPxl, region, pixelsToCheck, ctx, color) {
-        while (true) {
-            // Return 4 adjacent pixels from given seed pixel
-            const pixels = this.getAdjacentPixels(ctx, seedPxl.coords.x, seedPxl.coords.y);
+        while (seedPxl) {
+            for (let pxl of this.getAdjacentPixels(ctx, seedPxl.coords.x, seedPxl.coords.y)) {
+                const key = `${pxl.coords.x}${pxl.coords.y}`;
 
-            for (let i in pixels) {
-                // If pixels are already in the region
-                if (region[`${pixels[i].coords.x}${pixels[i].coords.y}`]) {
-                    continue;
-                }
-
-                if (this.sameColor(pixels[i].color, color)) {
-                    // maybe simplify this to hold only coords
-                    region[`${pixels[i].coords.x}${pixels[i].coords.y}`] = pixels[i];
-                    pixelsToCheck[`${pixels[i].coords.x}${pixels[i].coords.y}`] = pixels[i];
+                if (region[key] === undefined && this.sameColor(pxl.color, color)) {
+                    region[key] = pxl.coords;
+                    pixelsToCheck.push(pxl);
                 }
             }
 
-            seedPxl = this.popPixel(pixelsToCheck);
-
-            if (!seedPxl) {
-                break;
-            }
+            seedPxl = pixelsToCheck.pop();
         }
-    }
-
-    popPixel(objectCollection) {
-        for (let i in objectCollection) {
-            const pixel = objectCollection[i];
-            delete objectCollection[i];
-            return pixel;
-        }
-
-        return false;
     }
 
     fillRegion(region) {
         const ctx = this.canvasRef.current.getContext('2d');
+        ctx.fillStyle = "red";
 
         for (let i in region) {
-            ctx.fillStyle = "yellow";
-            ctx.fillRect(region[i].coords.x, region[i].coords.y, 1, 1);
+            ctx.fillRect(region[i].x, region[i].y, 1, 1);
         }
+
+        console.log("Region filled");
     }
 
     getAdjacentPixels(ctx, x, y) {
-        return {
-            top: {
+        return [
+            {
                 color: ctx.getImageData(x, y+1, 1, 1).data,
                 coords: {x, y: y+1}
             },
-            right: {
+            {
                 color: ctx.getImageData(x+1, y, 1, 1).data,
                 coords: {x: x+1, y}
             },
-            bottom: {
+            {
                 color: ctx.getImageData(x, y-1, 1, 1).data,
                 coords: {x, y: y-1}
             },
-            left: {
+            {
                 color: ctx.getImageData(x-1, y, 1, 1).data,
                 coords: {x: x-1, y}
             }
-        };
+        ];
     }
 
     sameColor(first, second) {
-        return (first[0] === second[0] && first[1] === second[1] && first[2] === second[2] && first[3] === second[3]);
+        return (first[0] === second[0] && first[1] === second[1] && first[2] === second[2] /*&& first[3] === second[3]*/);
     }
 
     render() {
