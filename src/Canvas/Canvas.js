@@ -112,12 +112,12 @@ class Canvas extends Component {
 
     growRegion(seedPxl, region, pixelsToCheck, ctx, color) {
         while (seedPxl) {
-            const pixels = this.getAdjacentPixels(ctx, seedPxl.coords.x, seedPxl.coords.y);
+            const pixels = this.getAdjacentPixels(ctx, seedPxl.coords.x, seedPxl.coords.y, color);
 
             for (let pxl of pixels) {
                 const key = `${pxl.coords.x}${pxl.coords.y}`;
 
-                if (region[key] === undefined && this.sameColor(pxl.color, color)) {
+                if (region[key] === undefined) {
                     region[key] = pxl.coords;
                     pixelsToCheck.push(pxl);
                 }
@@ -136,45 +136,23 @@ class Canvas extends Component {
         }
     }
 
-    getAdjacentPixels(ctx, x, y) {
-        return [
-            {
-                color: ctx.getImageData(x, y+1, 1, 1).data,
-                coords: {x, y: y+1}
-            },
-            {
-                color: ctx.getImageData(x, y+1, 1, 1).data,
-                coords: {x: x+1, y: y+1}
-            },
-            {
-                color: ctx.getImageData(x+1, y, 1, 1).data,
-                coords: {x: x+1, y}
-            },
-            {
-                color: ctx.getImageData(x, y-1, 1, 1).data,
-                coords: {x: x+1, y: y-1}
-            },
-            {
-                color: ctx.getImageData(x-1, y, 1, 1).data,
-                coords: {x, y: y-1}
-            },
-            {
-                color: ctx.getImageData(x-1, y, 1, 1).data,
-                coords: {x: x-1, y: y-1}
-            },
-            {
-                color: ctx.getImageData(x-1, y, 1, 1).data,
-                coords: {x: x-1, y}
-            },
-            {
-                color: ctx.getImageData(x-1, y, 1, 1).data,
-                coords: {x: x-1, y: y+1}
-            }
-        ];
-    }
+    getAdjacentPixels(ctx, x, y, color) {
+        const data = ctx.getImageData(x-1, y-1, 3, 3).data;
+        const result = [];
 
-    sameColor(first, second) {
-        return (first[0] === second[0] && first[1] === second[1] && first[2] === second[2] /*&& first[3] === second[3]*/);
+        for (let i = 4; i < 35; i += 8) {
+            if (data[i] === color[0] && data[i+1] === color[1] && data[i+2] === color[2]) {
+                result.push({
+                    color: [data[i], data[i+1], data[i+2]],
+                    coords: {
+                        x: i === 12 ? x-1 : (i === 20 ? x+1: x),
+                        y: i < 12 ? y-1 : (i > 23 ? y+1 : y),
+                    }
+                });
+            }
+        }
+
+        return result;
     }
 
     render() {
