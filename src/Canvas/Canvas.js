@@ -106,15 +106,15 @@ class Canvas extends Component {
             region[`${seedPxl.coords.x}${seedPxl.coords.y}`] = seedPxl.coords;
 
             this.growRegion(seedPxl, region, pixelsToCheck, ctx, seedPxl.color);
-            console.log("Region grown", Object.keys(region).length);
-
             this.fillRegion(region);
         }
     };
 
     growRegion(seedPxl, region, pixelsToCheck, ctx, color) {
         while (seedPxl) {
-            for (let pxl of this.getAdjacentPixels(ctx, seedPxl.coords.x, seedPxl.coords.y)) {
+            const pixels = this.getAdjacentPixels(ctx, seedPxl.coords.x, seedPxl.coords.y);
+
+            for (let pxl of pixels) {
                 const key = `${pxl.coords.x}${pxl.coords.y}`;
 
                 if (region[key] === undefined && this.sameColor(pxl.color, color)) {
@@ -129,13 +129,11 @@ class Canvas extends Component {
 
     fillRegion(region) {
         const ctx = this.canvasRef.current.getContext('2d');
-        ctx.fillStyle = "red";
+        ctx.fillStyle = this.state.strokeStyle;
 
         for (let i in region) {
             ctx.fillRect(region[i].x, region[i].y, 1, 1);
         }
-
-        console.log("Region filled");
     }
 
     getAdjacentPixels(ctx, x, y) {
@@ -145,16 +143,32 @@ class Canvas extends Component {
                 coords: {x, y: y+1}
             },
             {
+                color: ctx.getImageData(x, y+1, 1, 1).data,
+                coords: {x: x+1, y: y+1}
+            },
+            {
                 color: ctx.getImageData(x+1, y, 1, 1).data,
                 coords: {x: x+1, y}
             },
             {
                 color: ctx.getImageData(x, y-1, 1, 1).data,
+                coords: {x: x+1, y: y-1}
+            },
+            {
+                color: ctx.getImageData(x-1, y, 1, 1).data,
                 coords: {x, y: y-1}
             },
             {
                 color: ctx.getImageData(x-1, y, 1, 1).data,
+                coords: {x: x-1, y: y-1}
+            },
+            {
+                color: ctx.getImageData(x-1, y, 1, 1).data,
                 coords: {x: x-1, y}
+            },
+            {
+                color: ctx.getImageData(x-1, y, 1, 1).data,
+                coords: {x: x-1, y: y+1}
             }
         ];
     }

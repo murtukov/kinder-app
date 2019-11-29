@@ -4,7 +4,6 @@
     <list default="true" id="c8c4da77-0cfb-42fe-9cfa-4aaf9cbeaeaa" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Canvas/Canvas.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Canvas/Canvas.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Canvas/ColorPicker/ColorPicker.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Canvas/ColorPicker/ColorPicker.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,7 +91,7 @@
       <workItem from="1574757183720" duration="14096000" />
       <workItem from="1574861333259" duration="11664000" />
       <workItem from="1574952943894" duration="1849000" />
-      <workItem from="1574956455460" duration="10938000" />
+      <workItem from="1574956455460" duration="12839000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <created>1574627509440</created>
@@ -136,7 +135,14 @@
       <option name="project" value="LOCAL" />
       <updated>1574968455119</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Simplify region growing algorithm">
+      <created>1574988537591</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1574988537591</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -164,17 +170,18 @@
     <MESSAGE value="Working example with 4 pixels growing" />
     <MESSAGE value="Basic working example" />
     <MESSAGE value="Get rid of recursive calls" />
-    <option name="LAST_COMMIT_MESSAGE" value="Get rid of recursive calls" />
+    <MESSAGE value="Simplify region growing algorithm" />
+    <option name="LAST_COMMIT_MESSAGE" value="Simplify region growing algorithm" />
   </component>
   <component name="WindowStateProjectService">
     <state x="734" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1574964185432">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
     <state x="734" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.2560.1040@0.0.2560.1040" timestamp="1574964185432" />
-    <state x="873" y="112" key="CommitChangelistDialog2" timestamp="1574968454800">
+    <state x="873" y="112" key="CommitChangelistDialog2" timestamp="1574988537261">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
-    <state x="873" y="112" key="CommitChangelistDialog2/0.0.2560.1040@0.0.2560.1040" timestamp="1574968454800" />
+    <state x="873" y="112" key="CommitChangelistDialog2/0.0.2560.1040@0.0.2560.1040" timestamp="1574988537261" />
     <state width="2517" height="282" key="GridCell.Tab.0.bottom" timestamp="1574969774349">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
@@ -243,17 +250,5 @@
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
     <state x="366" y="165" width="1142" height="716" key="SettingsEditor/0.0.2560.1040@0.0.2560.1040" timestamp="1574964612775" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/Canvas/Canvas.js</url>
-          <line>100</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
