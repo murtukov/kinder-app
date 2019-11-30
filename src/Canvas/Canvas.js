@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import styles from './styles';
 import {Button, Slider} from "@blueprintjs/core";
-import ColorPicker from "./ColorPicker/ColorPicker";
 import withStyles from 'react-jss';
+import ColorPicker from "./ColorPicker/ColorPicker";
 
 const modes = {DRAW: 'draw', FILL: 'fill'};
 
@@ -54,13 +54,13 @@ class Canvas extends Component {
             }
         });
 
-        canvas.addEventListener('mouseup', e => {
-            mousePressed = false;
-            let imgd = ctx.getImageData(0, 0, 1, 1);
-        });
+        canvas.addEventListener('mouseup', () => mousePressed = false);
+        canvas.addEventListener('click', this.onFillClick);
 
-        canvas.addEventListener('mouseleave', () => mousePressed = false);
-        canvas.addEventListener('click', this.onFillClick.bind(this));
+        // Todo: rethink this
+        canvas.addEventListener('mouseleave', () => {
+            mousePressed = false
+        });
     }
 
     draw(x, y, isDown) {
@@ -90,7 +90,7 @@ class Canvas extends Component {
         this.setState({...this.state, lineWidth: width});
     }
 
-    setColor = (color) => {
+    setColor = (color) => { console.log("Setting the color", color);
         const ctx = this.canvasRef.current.getContext('2d');
         ctx.strokeStyle = color;
         ctx.fillStyle = color;
@@ -98,8 +98,12 @@ class Canvas extends Component {
 
     clear = () => {
         const ctx = this.canvasRef.current.getContext('2d');
+        const prevColor = ctx.fillStyle;
+
         ctx.fillStyle = "white";
         ctx.fillRect(0, 0, this.canvasRef.current.width, this.canvasRef.current.height);
+
+        ctx.fillStyle = prevColor;
     };
 
     onFillClick = (e) => {
@@ -166,10 +170,11 @@ class Canvas extends Component {
             <canvas
                 id="myCanvas"
                 ref={this.canvasRef}
-                className={c.canvas}
+                className={this.state.mode === modes.DRAW ? c.canvasDraw : c.canvasFill}
                 width={Canvas.width}
                 height={Canvas.height}
             />
+            <ColorPicker onClick={this.setColor}/>
             <Button
                 text="Draw"
                 icon="draw"
@@ -194,8 +199,6 @@ class Canvas extends Component {
                     value={this.state.lineWidth}
                 />
             </div>
-
-            <ColorPicker onClick={this.setColor}/>
         </>;
     }
 }
