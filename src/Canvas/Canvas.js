@@ -36,6 +36,7 @@ class Canvas extends Component {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         ctx.strokeStyle = this.state.strokeStyle;
+        ctx.fillStyle = "black";
         ctx.lineWidth = this.state.lineWidth;
         ctx.lineJoin = this.state.lineJoin;
 
@@ -59,7 +60,7 @@ class Canvas extends Component {
         });
 
         canvas.addEventListener('mouseleave', () => mousePressed = false);
-        canvas.addEventListener('click', this.onFillClick);
+        canvas.addEventListener('click', this.onFillClick.bind(this));
     }
 
     draw(x, y, isDown) {
@@ -90,8 +91,9 @@ class Canvas extends Component {
     }
 
     setColor = (color) => {
-        const canvas = this.canvasRef.current.getContext('2d');
-        canvas.strokeStyle = color;
+        const ctx = this.canvasRef.current.getContext('2d');
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
     };
 
     clear = () => {
@@ -102,7 +104,7 @@ class Canvas extends Component {
 
     onFillClick = (e) => {
         if (modes.FILL === this.state.mode) {
-            const region = {};
+            const region = [];
             const pixelsToCheck = [];
 
             const ctx = this.canvasRef.current.getContext('2d');
@@ -115,13 +117,17 @@ class Canvas extends Component {
             region[( seedPxl.coords.y << 16 ) ^ seedPxl.coords.x] = seedPxl.coords;
 
             this.growRegion(seedPxl, region, pixelsToCheck, ctx, seedPxl.color);
-            console.log("Region", region);
             this.fillRegion(region);
         }
     };
 
     growRegion(seedPxl, region, pixelsToCheck, ctx, color) {
         while (seedPxl) {
+            if (seedPxl.coords.x > Canvas.width || seedPxl.coords.y > Canvas.height || seedPxl.coords.x < 0 || seedPxl.coords.y < 0) {
+                seedPxl = pixelsToCheck.pop();
+                continue;
+            }
+
             const pixels = this.getAdjacentPixels(ctx, seedPxl.coords.x, seedPxl.coords.y, color);
 
             for (let pxl of pixels) {
@@ -137,14 +143,13 @@ class Canvas extends Component {
         }
     }
 
-    fillRegion(region) {
+    fillRegion = (region) => {
         const ctx = this.canvasRef.current.getContext('2d');
-        ctx.fillStyle = this.state.strokeStyle;
 
         for (let i in region) {
             ctx.fillRect(region[i].x, region[i].y, 1, 1);
         }
-    }
+    };
 
     getAdjacentPixels(ctx, x, y, color) {
         const data = ctx.getImageData(x-1, y-1, 3, 3).data;
