@@ -110,36 +110,44 @@ class Canvas extends Component {
             const ctx = this.canvasRef.current.getContext('2d');
             // Get color of seed pixel
             const seedPxl = {
-                color: ctx.getImageData(e.offsetX, e.offsetY, 1, 1).data,
-                coords: {x: e.offsetX, y: e.offsetY}
+                x: e.offsetX,
+                y: e.offsetY
             };
 
-            region[( seedPxl.coords.y << 16 ) ^ seedPxl.coords.x] = seedPxl.coords;
+            region[( seedPxl.y << 16 ) ^ seedPxl.x] = seedPxl;
 
-            this.growRegion(seedPxl, region, pixelsToCheck, ctx, seedPxl.color);
+            this.growRegion(seedPxl, region, pixelsToCheck, ctx, ctx.getImageData(e.offsetX, e.offsetY, 1, 1).data);
             this.fillRegion(region);
         }
     };
 
-    growRegion(seedPxl, region, pixelsToCheck, ctx, color) {
-        while (seedPxl) {
-            if (seedPxl.coords.x > Canvas.width || seedPxl.coords.y > Canvas.height || seedPxl.coords.x < 0 || seedPxl.coords.y < 0) {
-                seedPxl = pixelsToCheck.pop();
+    growRegion(seed, region, pixelsToCheck, ctx, color) {
+        while (seed) {
+            if (seed.x > Canvas.width || seed.y > Canvas.height || seed.x < 0 || seed.y < 0) {
+                seed = pixelsToCheck.pop();
                 continue;
             }
 
-            const pixels = this.getAdjacentPixels(ctx, seedPxl.coords.x, seedPxl.coords.y, color);
+            const data = ctx.getImageData(seed.x-1, seed.y-1, 3, 3).data;
 
-            for (let pxl of pixels) {
-                const key = ( pxl.coords.y << 16 ) ^ pxl.coords.x;
+            // Get adjacent pixels
+            for (let i = 4; i < 35; i += 8) {
+                if (data[i] === color[0] && data[i+1] === color[1] && data[i+2] === color[2]) {
+                    const adjacent = {
+                        x: i === 12 ? seed.x-1 : (i === 20 ? seed.x+1 : seed.x),
+                        y: i  <  12 ? seed.y-1 : (i  >  23 ? seed.y+1 : seed.y),
+                    };
 
-                if (region[key] === undefined) {
-                    region[key] = pxl.coords;
-                    pixelsToCheck[pixelsToCheck.length] = pxl;
+                    const key = ( adjacent.y << 16 ) ^ adjacent.x;
+
+                    if (undefined === region[key]) {
+                        region[key] = adjacent;
+                        pixelsToCheck[pixelsToCheck.length] = adjacent;
+                    }
                 }
             }
 
-            seedPxl = pixelsToCheck.pop();
+            seed = pixelsToCheck.pop();
         }
     }
 
@@ -150,25 +158,6 @@ class Canvas extends Component {
             ctx.fillRect(region[i].x, region[i].y, 1, 1);
         }
     };
-
-    getAdjacentPixels(ctx, x, y, color) {
-        const data = ctx.getImageData(x-1, y-1, 3, 3).data;
-        const result = [];
-
-        for (let i = 4; i < 35; i += 8) {
-            if (data[i] === color[0] && data[i+1] === color[1] && data[i+2] === color[2]) {
-                result[result.length] = {
-                    color: [data[i], data[i+1], data[i+2]],
-                    coords: {
-                        x: i === 12 ? x-1 : (i === 20 ? x+1: x),
-                        y: i < 12 ? y-1 : (i > 23 ? y+1 : y),
-                    }
-                };
-            }
-        }
-
-        return result;
-    }
 
     render() {
         const {classes: c} = this.props;
