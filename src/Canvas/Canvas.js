@@ -174,16 +174,20 @@ class Canvas extends Component {
                 width={Canvas.width}
                 height={Canvas.height}
             />
-            <ColorPicker onClick={this.setColor}/>
+            <ColorPicker
+                onClick={this.setColor}
+            />
             <Button
                 text="Draw"
                 icon="draw"
                 onClick={() => this.setMode(modes.DRAW)}
+                active={this.state.mode === modes.DRAW}
             />
             <Button
                 text="Fill"
                 icon="tint"
                 onClick={() => this.setMode(modes.FILL)}
+                active={this.state.mode === modes.FILL}
             />
             <Button
                 text="Clear"
