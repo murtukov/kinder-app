@@ -4,18 +4,30 @@ import leftArrow from '../../assets/left-arrow.png';
 
 let mousePressed = false;
 
+const ACTIONS = {
+    colorPicker: 'color-picker',
+    brightness: 'brightness'
+};
+
 class ColorPicker extends React.Component {
+    static radius = 100;
+
     canvasRef = React.createRef();
     layerRef = React.createRef();
     brightnessRef = React.createRef();
+
+    state = {
+        crosshairCoords: {x: 0, y: 0},
+        action: ''
+    };
 
     componentDidMount() {
         const layerCanvas = this.layerRef.current;
         const layerCtx = layerCanvas.getContext('2d');
         const canvasCtx = this.canvasRef.current.getContext('2d');
 
-        const brightnessCanvas = this.brightnessRef.current;
-        const brightnessCtx = brightnessCanvas.getContext('2d');
+        const valueCanvas = this.brightnessRef.current;
+        const brightnessCtx = valueCanvas.getContext('2d');
 
         // Configure the gradient
         const gradient = brightnessCtx.createLinearGradient(0, 4, 0, 192);
@@ -27,55 +39,99 @@ class ColorPicker extends React.Component {
         brightnessCtx.fillStyle = gradient;
         brightnessCtx.fillRect(0, 4, 10, 192);
 
-        brightnessCanvas.addEventListener('mousedown', () => mousePressed = true);
-        layerCanvas.addEventListener('mousedown', () => mousePressed = true);
+        // Set mouseDown events
+        valueCanvas.addEventListener('mousedown', () => this.setState({...this.state, action: ACTIONS.brightness}));
+        layerCanvas.addEventListener('mousedown', () => this.setState({...this.state, action: ACTIONS.colorPicker}));
 
-        layerCanvas.addEventListener('mousemove', e => {
-            if (mousePressed) {
-                this.drawCrosshair(e.offsetX, e.offsetY, layerCtx);
+        // Set mouseMove event
+        document.addEventListener('mousemove', e => {
+            switch (this.state.action) {
+                case ACTIONS.brightness: {
+                    const {y} = this.getOffset(e, valueCanvas);
+
+                    this.drawArrow(y, brightnessCtx);
+
+                    if (y - 7 === 0) {
+                        this.drawCircle();
+                    } else {
+                        this.drawCircle(1 - (1 / (190 / (y - 7))));
+                    }
+
+                    const rgb = canvasCtx.getImageData(this.state.crosshairCoords.x, this.state.crosshairCoords.y, 1, 1).data;
+                    this.props.onClick(`rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`);
+
+                    break;
+                }
+                case ACTIONS.colorPicker: {
+                    const {x, y} = this.getOffset(e, layerCanvas);
+                    this.drawCrosshair(x, y, layerCtx);
+                    break;
+                }
+                default: return;
             }
         });
-        brightnessCanvas.addEventListener('mousemove', e => {
-            if (mousePressed) {
-                this.drawArrow(e.offsetY, brightnessCtx);
 
-                if (e.offsetY-7 === 0) {
-                    this.drawCircle(1);
-                } else {
-                    this.drawCircle(1 - (1/(190/(e.offsetY-7))));
+        // Set mouseUp event
+        document.addEventListener('mouseup', e => {
+            switch (this.state.action) {
+                case ACTIONS.brightness: {
+                    const {y} = this.getOffset(e, valueCanvas);
+                    const {x: crossX, y: crossY} = this.state.crosshairCoords;
+
+                    const rgb = canvasCtx.getImageData(crossX, crossY, 1, 1).data;
+
+                    this.props.onClick(`rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`);
+                    this.drawArrow(y, brightnessCtx);
+
+                    break;
+                }
+                case ACTIONS.colorPicker: {
+                    let {x, y} = this.getOffset(e, layerCanvas);
+
+                    const rgb = canvasCtx.getImageData(x, y, 1, 1).data;
+
+                    this.props.onClick(`rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`);
+                    this.drawCrosshair(x, y, layerCtx);
+
+                    break;
                 }
             }
-        });
 
-        layerCanvas.addEventListener('mouseup', e => {
-            mousePressed = false;
-            const rgb = canvasCtx.getImageData(e.offsetX, e.offsetY, 1, 1).data;
-            this.props.onClick(`rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`);
-            this.drawCrosshair(e.offsetX, e.offsetY, layerCtx);
-        });
-
-        brightnessCanvas.addEventListener('mouseup', e => {
-            mousePressed = false;
-            const rgb = canvasCtx.getImageData(e.offsetX, e.offsetY, 1, 1).data;
-            this.props.onClick(`rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`);
-            this.drawArrow(e.offsetY, brightnessCtx);
-        });
-
-        brightnessCanvas.addEventListener('mouseleave', () => {
-            mousePressed = false
+            this.setState({...this.state, action: ''});
         });
 
         this.drawCircle();
         this.drawArrow(0, brightnessCtx);
     }
 
+    getOffset(mouseEvent, context) {
+        return {
+            x: mouseEvent.clientX - context.getBoundingClientRect().x,
+            y: mouseEvent.clientY - context.getBoundingClientRect().y
+        };
+    }
+
     drawCrosshair(x, y, ctx) {
+        let [r, phi] = this.xy2polar(x - ColorPicker.radius, y - ColorPicker.radius);
+
+        if(r > ColorPicker.radius) {
+            r = ColorPicker.radius-1;
+            [x, y] = this.polar2xy(r, phi);
+            x += ColorPicker.radius;
+            y += ColorPicker.radius;
+        }
+
         const baseImage = new Image();
         baseImage.src = crosshair;
         baseImage.onload = () => {
             ctx.clearRect(0, 0, 200, 200);
             ctx.drawImage(baseImage, x-12, y-12, 24, 24);
         };
+
+        this.setState({
+            ...this.state,
+            crosshairCoords: {x, y}
+        });
     }
 
     drawArrow(y, ctx) {
@@ -92,8 +148,11 @@ class ColorPicker extends React.Component {
     }
 
     drawCircle = (value = 1.0) => {
+        if (value < 0) value = 0;
+        if (value > 1) value = 1;
+
         const ctx = this.canvasRef.current.getContext("2d");
-        let radius = 100;
+        let radius = ColorPicker.radius;
         let image = ctx.createImageData(2*radius, 2*radius);
 
         for (let x = -radius; x < radius; x++) {
@@ -140,7 +199,7 @@ class ColorPicker extends React.Component {
         const chroma = value * saturation;
         const x = chroma * (1- Math.abs(((hue / 60) % 2) - 1));
 
-        const [r1, g1, b1] = ((hue) => {
+        const [r1, g1, b1] = (hue => {
             if (hue >= 0 && hue <= 1) return [chroma, x, 0];
             if (hue >= 1 && hue <= 2) return [x, chroma, 0];
             if (hue >= 2 && hue <= 3) return [0, chroma, x];
@@ -169,6 +228,10 @@ class ColorPicker extends React.Component {
         return [r, phi];
     }
 
+    polar2xy(r, phi) {
+        return [r * Math.cos(phi), r * Math.sin(phi)];
+    }
+
     // rad in [-π, π] range
     // return degree in [0, 360] range
     rad2deg(rad) {
@@ -177,30 +240,32 @@ class ColorPicker extends React.Component {
 
     render() {
         return (
-            <div style={{position: 'relative', width: 200, height: 200}}>
-                <canvas
-                    ref={this.canvasRef}
-                    width={200}
-                    height={200}
-                    style={{position: 'absolute', top: 0, left: 0, zIndex: 0}}
-                />
-                <canvas
-                    ref={this.layerRef}
-                    width={199}
-                    height={199}
-                    style={{position: 'absolute', top: 0, left: 0, zIndex: 1, border: '1px solid lightgrey', borderRadius: 200}}
-                />
-                <canvas
-                    width={20}
-                    height={200}
-                    ref={this.brightnessRef}
-                    style={{
-                        right: -45,
-                        position: 'absolute',
-                        border: '1px solid lightgrey'
-                    }}
-                />
-            </div>
+            <>
+                <div style={{position: 'relative', width: 200, height: 200}}>
+                    <canvas
+                        ref={this.canvasRef}
+                        width={200}
+                        height={200}
+                        style={{position: 'absolute', top: 0, left: 0, zIndex: 0}}
+                    />
+                    <canvas
+                        ref={this.layerRef}
+                        width={199}
+                        height={199}
+                        style={{position: 'absolute', top: 0, left: 0, zIndex: 1, border: '1px solid lightgrey', borderRadius: 200}}
+                    />
+                    <canvas
+                        width={20}
+                        height={200}
+                        ref={this.brightnessRef}
+                        style={{
+                            right: -45,
+                            position: 'absolute',
+                            border: '1px solid lightgrey'
+                        }}
+                    />
+                </div>
+            </>
         );
     }
 }

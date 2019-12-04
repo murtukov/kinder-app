@@ -12,6 +12,7 @@ let lastX, lastY;
 class Canvas extends Component {
     static width = 500;
     static height = 300;
+    static threshold = 110;
 
     state = {
         mousePressed: false,
@@ -27,7 +28,7 @@ class Canvas extends Component {
         this.canvasRef = React.createRef();
     }
 
-    componentDidMount() { console.log("Mount");
+    componentDidMount() {
         const canvas = this.canvasRef.current;
         const ctx = canvas.getContext("2d");
 
@@ -57,7 +58,6 @@ class Canvas extends Component {
         canvas.addEventListener('mouseup', () => mousePressed = false);
         canvas.addEventListener('click', this.onFillClick);
 
-        // Todo: rethink this
         canvas.addEventListener('mouseleave', () => {
             mousePressed = false
         });
@@ -80,7 +80,6 @@ class Canvas extends Component {
 
     setMode(mode) {
         this.setState({...this.state, mode});
-        console.log("Change mode...");
     }
 
     setWidth(width = 1) {
@@ -90,7 +89,7 @@ class Canvas extends Component {
         this.setState({...this.state, lineWidth: width});
     }
 
-    setColor = (color) => { console.log("Setting the color", color);
+    setColor = (color) => {
         const ctx = this.canvasRef.current.getContext('2d');
         ctx.strokeStyle = color;
         ctx.fillStyle = color;
@@ -121,6 +120,7 @@ class Canvas extends Component {
             region[( seedPxl.y << 16 ) ^ seedPxl.x] = seedPxl;
 
             this.growRegion(seedPxl, region, pixelsToCheck, ctx, ctx.getImageData(e.offsetX, e.offsetY, 1, 1).data);
+
             this.fillRegion(region);
         }
     };
@@ -136,7 +136,11 @@ class Canvas extends Component {
 
             // Get adjacent pixels
             for (let i = 4; i < 35; i += 8) {
-                if (data[i] === color[0] && data[i+1] === color[1] && data[i+2] === color[2]) {
+                if (
+                    Math.abs(data[i] - color[0]) < Canvas.threshold &&
+                    Math.abs(data[i+1] - color[1]) < Canvas.threshold &&
+                    Math.abs(data[i+2] - color[2]) < Canvas.threshold)
+                {
                     const adjacent = {
                         x: i === 12 ? seed.x-1 : (i === 20 ? seed.x+1 : seed.x),
                         y: i  <  12 ? seed.y-1 : (i  >  23 ? seed.y+1 : seed.y),
