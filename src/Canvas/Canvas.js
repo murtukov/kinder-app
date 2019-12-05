@@ -179,7 +179,7 @@ class Canvas extends Component {
                 height={Canvas.height}
             />
             <ColorPicker
-                onClick={this.setColor}
+                setColor={this.setColor}
             />
             <Button
                 text="Draw"
