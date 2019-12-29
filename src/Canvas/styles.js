@@ -13,8 +13,20 @@ export default {
         extend: 'canvas',
         cursor: `url(${pen}) 0 30, pointer`
     },
+    canvasStamp: {
+        extend: 'canvas',
+        cursor: `none`
+    },
     square: {
         width: 20,
         height: 20
+    },
+    layer: {
+        position: 'absolute',
+        cursor: 'none',
+        border: '1px solid',
+        left: 0,
+        top: 0,
+        display: 'none',
     }
 }

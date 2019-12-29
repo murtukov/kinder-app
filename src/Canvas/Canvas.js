@@ -1,70 +1,94 @@
 import React, {Component} from 'react';
 import styles from './styles';
-import {Button, Slider} from "@blueprintjs/core";
 import withStyles from 'react-jss';
-import ColorPicker from "./ColorPicker/ColorPicker";
+import { getOffset } from "./helpers";
+import {getCurrentStamp} from "../helpers";
 
-const modes = {DRAW: 'draw', FILL: 'fill'};
+export const modes = {
+    DRAW: 'draw',
+    FILL: 'fill',
+    STAMP: 'stamp'
+};
 
-let mousePressed = false;
 let lastX, lastY;
 
 class Canvas extends Component {
-    static width = 500;
-    static height = 300;
-    static threshold = 110;
+    static width = 800;
+    static height = 600;
+    static threshold = 100;
 
     state = {
-        mousePressed: false,
-        strokeStyle: 'black',
-        lineWidth: 1,
-        lineJoin: 'round',
-        mode: modes.DRAW,
-        ctx: null
+        mouseDown: false
     };
 
     constructor(props) {
         super(props);
         this.canvasRef = React.createRef();
+        this.layerRef = React.createRef();
     }
 
+    get canvas() {
+        return this.canvasRef.current;
+    }
+
+    get ctx() {
+        return this.canvas.getContext("2d");
+    }
+
+    setMouseDown = (mouseDown) => {
+        this.setState({...this.state, mouseDown});
+    };
+
     componentDidMount() {
-        const canvas = this.canvasRef.current;
-        const ctx = canvas.getContext("2d");
+        // Pass canvas ref to parent
+        this.props.setRef(this.canvasRef);
+
+        const ctx = this.ctx;
+        const layer = this.layerRef.current;
+        const mode = this.props.mode;
 
         // Set background color
         ctx.fillStyle = "white";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        ctx.strokeStyle = this.state.strokeStyle;
-        ctx.fillStyle = "black";
-        ctx.lineWidth = this.state.lineWidth;
-        ctx.lineJoin = this.state.lineJoin;
+        ctx.strokeStyle = 'black';
+        ctx.fillStyle = 'black';
+        ctx.lineJoin = 'round';
+        ctx.lineWidth = 1;
 
-        canvas.addEventListener('mousedown', e => {
-            mousePressed = true;
-
-            if (modes.DRAW === this.state.mode) {
-                this.draw(e.pageX - offset(e.target).left, e.pageY - offset(e.target).top, false);
+        this.canvas.addEventListener('mousedown', e => {
+            this.setMouseDown(true);
+            if (modes.DRAW === mode) {
+                this.draw(getOffset(e, this.canvas), false);
             }
         });
 
-        canvas.addEventListener('mousemove', e => {
-            if (mousePressed && modes.DRAW === this.state.mode) {
-                this.draw(e.pageX - offset(e.target).left, e.pageY - offset(e.target).top, true);
+        document.addEventListener('mousemove', e => {
+            if (modes.DRAW === this.props.mode && this.state.mouseDown === true) {
+                this.draw(getOffset(e, this.canvas), true);
             }
         });
 
-        canvas.addEventListener('mouseup', () => mousePressed = false);
-        canvas.addEventListener('click', this.onFillClick);
-
-        canvas.addEventListener('mouseleave', () => {
-            mousePressed = false
+        layer.addEventListener('mousemove', e => {
+            if (modes.STAMP === this.props.mode) {
+                this.drawStampCursor(e);
+            }
         });
+
+        layer.addEventListener('mouseleave', this.cleanLayer);
+        layer.addEventListener('click', this.drawStamp);
+
+        document.addEventListener('mouseup', () => {
+            if(this.state.mouseDown) {
+                this.props.persistStep();
+            }
+            this.setMouseDown(false);
+        });
+        this.canvas.addEventListener('click', this.onFillClick);
     }
 
-    draw(x, y, isDown) {
-        const ctx = this.canvasRef.current.getContext("2d");
+    draw = ({x, y}, isDown) => {
+        const ctx = this.ctx;
 
         if (isDown) {
             ctx.beginPath();
@@ -76,37 +100,43 @@ class Canvas extends Component {
 
         lastX = x;
         lastY = y;
-    }
-
-    setMode(mode) {
-        this.setState({...this.state, mode});
-    }
-
-    setWidth(width = 1) {
-        const canvas = this.canvasRef.current.getContext('2d');
-        canvas.lineWidth = width;
-
-        this.setState({...this.state, lineWidth: width});
-    }
-
-    setColor = (color) => {
-        const ctx = this.canvasRef.current.getContext('2d');
-        ctx.strokeStyle = color;
-        ctx.fillStyle = color;
     };
 
-    clear = () => {
-        const ctx = this.canvasRef.current.getContext('2d');
-        const prevColor = ctx.fillStyle;
+    drawStamp = (e) => {
+        const size = this.props.stampSize;
+        const img = new Image;
 
-        ctx.fillStyle = "white";
-        ctx.fillRect(0, 0, this.canvasRef.current.width, this.canvasRef.current.height);
+        // ----------------------------------
+        const request = new XMLHttpRequest();
+        request.open("GET", getCurrentStamp(this.props.currentStamp));
+        request.setRequestHeader("Content-Type", "image/svg+xml");
+        request.addEventListener("load", function(event) {
+            const src = this.responseText.split('black').join('red');
+            img.src = "data:image/svg+xml;charset=utf-8," + src;
+        });
+        request.send();
+        // -----------------------------------
 
-        ctx.fillStyle = prevColor;
+
+        img.onload = () => {
+            this.ctx.drawImage(img, e.offsetX - (size / 2), e.offsetY - (size / 2), size, size);
+        }
+    };
+
+    drawStampCursor = (e) => {
+        const size = this.props.stampSize;
+        const ctx = this.layerRef.current.getContext('2d');
+
+        ctx.clearRect(0, 0, Canvas.width, Canvas.height);
+
+        const img = new Image;
+        img.src = getCurrentStamp(this.props.currentStamp);
+
+        ctx.drawImage(img, e.offsetX - (size/2), e.offsetY - (size/2), size, size);
     };
 
     onFillClick = (e) => {
-        if (modes.FILL === this.state.mode) {
+        if (modes.FILL === this.props.mode) {
             const region = [];
             const pixelsToCheck = [];
 
@@ -120,7 +150,6 @@ class Canvas extends Component {
             region[( seedPxl.y << 16 ) ^ seedPxl.x] = seedPxl;
 
             this.growRegion(seedPxl, region, pixelsToCheck, ctx, ctx.getImageData(e.offsetX, e.offsetY, 1, 1).data);
-
             this.fillRegion(region);
         }
     };
@@ -167,56 +196,39 @@ class Canvas extends Component {
         }
     };
 
-    render() {
-        const {classes: c} = this.props;
+    resolveClass = () => {
+        const {mode, classes: c} = this.props;
 
-        return <>
+        switch (mode) {
+            case modes.DRAW: return c.canvasDraw;
+            case modes.FILL: return c.canvasFill;
+            case modes.STAMP: return c.canvasStamp;
+        }
+    };
+
+    cleanLayer = () => {
+        const layer = this.layerRef.current.getContext('2d');
+        layer.clearRect(0, 0, Canvas.width, Canvas.height);
+    };
+
+    render() {
+        const {classes: c, mode} = this.props;
+
+        return <div style={{position:'relative'}}>
             <canvas
-                id="myCanvas"
                 ref={this.canvasRef}
-                className={this.state.mode === modes.DRAW ? c.canvasDraw : c.canvasFill}
+                className={this.resolveClass()}
                 width={Canvas.width}
                 height={Canvas.height}
             />
-            <ColorPicker
-                setColor={this.setColor}
+            <canvas
+                ref={this.layerRef}
+                width={Canvas.width}
+                height={Canvas.height}
+                className={c.layer}
+                style={{display: mode === modes.STAMP ? 'unset' : 'none'}}
             />
-            <Button
-                text="Draw"
-                icon="draw"
-                onClick={() => this.setMode(modes.DRAW)}
-                active={this.state.mode === modes.DRAW}
-            />
-            <Button
-                text="Fill"
-                icon="tint"
-                onClick={() => this.setMode(modes.FILL)}
-                active={this.state.mode === modes.FILL}
-            />
-            <Button
-                text="Clear"
-                onClick={this.clear}
-            />
-            <div style={{width: 300}}>
-                <Slider
-                    initialValue={1}
-                    stepSize={1}
-                    onChange={val => this.setWidth(val)}
-                    min={1}
-                    max={20}
-                    value={this.state.lineWidth}
-                />
-            </div>
-        </>;
-    }
-}
-
-function offset(el) {
-    const rect = el.getBoundingClientRect();
-
-    return {
-        top: rect.top + document.body.scrollTop,
-        left: rect.left + document.body.scrollLeft
+        </div>;
     }
 }
 

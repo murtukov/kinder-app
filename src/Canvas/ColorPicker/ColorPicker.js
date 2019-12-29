@@ -1,8 +1,7 @@
 import React from 'react';
 import crosshair from '../../assets/crosshair.png';
 import leftArrow from '../../assets/left-arrow.png';
-
-let mousePressed = false;
+import {getOffset} from "../helpers";
 
 const ACTIONS = {
     colorPicker: 'color-picker',
@@ -47,7 +46,7 @@ class ColorPicker extends React.Component {
         document.addEventListener('mousemove', e => {
             switch (this.state.action) {
                 case ACTIONS.brightness: {
-                    const {y} = this.getOffset(e, valueCanvas);
+                    const {y} = getOffset(e, valueCanvas);
 
                     this.drawArrow(y, brightnessCtx);
 
@@ -63,7 +62,7 @@ class ColorPicker extends React.Component {
                     break;
                 }
                 case ACTIONS.colorPicker: {
-                    const {x, y} = this.getOffset(e, layerCanvas);
+                    const {x, y} = getOffset(e, layerCanvas);
                     this.drawCrosshair(x, y, layerCtx);
                     break;
                 }
@@ -75,7 +74,7 @@ class ColorPicker extends React.Component {
         document.addEventListener('mouseup', e => {
             switch (this.state.action) {
                 case ACTIONS.brightness: {
-                    const {y} = this.getOffset(e, valueCanvas);
+                    const {y} = getOffset(e, valueCanvas);
                     const {x: crossX, y: crossY} = this.state.crosshairCoords;
 
                     const rgb = canvasCtx.getImageData(crossX, crossY, 1, 1).data;
@@ -86,7 +85,7 @@ class ColorPicker extends React.Component {
                     break;
                 }
                 case ACTIONS.colorPicker: {
-                    let {x, y} = this.getOffset(e, layerCanvas); // <--
+                    let {x, y} = getOffset(e, layerCanvas); // <--
 
                     const [offsetX, offsetY] = this.drawCrosshair(x, y, layerCtx);
                     const rgb = canvasCtx.getImageData(offsetX, offsetY, 1, 1).data;
@@ -102,13 +101,6 @@ class ColorPicker extends React.Component {
 
         this.drawCircle();
         this.drawArrow(0, brightnessCtx);
-    }
-
-    getOffset(mouseEvent, context) {
-        return {
-            x: mouseEvent.clientX - context.getBoundingClientRect().x,
-            y: mouseEvent.clientY - context.getBoundingClientRect().y
-        };
     }
 
     drawCrosshair(x, y, ctx) {

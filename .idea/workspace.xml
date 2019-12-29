@@ -1,17 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c8c4da77-0cfb-42fe-9cfa-4aaf9cbeaeaa" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Canvas/ColorPicker2/ColorPicker2.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/bucket.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/crosshair.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/pen.png" afterDir="false" />
+    <list default="true" id="c8c4da77-0cfb-42fe-9cfa-4aaf9cbeaeaa" name="Default Changelist" comment="Create round color picker">
+      <change afterPath="$PROJECT_DIR$/src/Canvas/ColorPicker/ColorPickerContainer.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Canvas/ColorPicker/model.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Canvas/helpers.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/paint-bucket.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/pencil.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/stamps/cloud.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/stamps/flash.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/stamps/heart.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/stamps/planet.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/stamps/star.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/stamps/star2.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/stamps/sun.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/stamps/sun2.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/turtle.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/helpers.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/model.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Canvas/Canvas.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Canvas/Canvas.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Canvas/ColorPicker/ColorPicker.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Canvas/ColorPicker/Square.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Canvas/ColorPicker/ColorPicker.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Canvas/ColorPicker/ColorPicker.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Canvas/styles.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Canvas/styles.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -39,16 +51,18 @@
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/assets" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/assets/stamps" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path" value="node" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.TypeScript" />
+    <property name="ts.external.directory.path" value="C:\Users\TimurMurtukov\AppData\Local\JetBrains\Toolbox\apps\WebStorm\ch-0\193.5662.54\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\TimurMurtukov\Desktop\Einführung in Multimedia\kinder-app\src\assets\stamps" />
       <recent name="C:\Users\TimurMurtukov\Desktop\Einführung in Multimedia\kinder-app\src\assets" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -105,7 +119,29 @@
       <workItem from="1574861333259" duration="11664000" />
       <workItem from="1574952943894" duration="1849000" />
       <workItem from="1574956455460" duration="37256000" />
-      <workItem from="1575113148183" duration="11078000" />
+      <workItem from="1575113148183" duration="13914000" />
+      <workItem from="1575145063317" duration="13042000" />
+      <workItem from="1575200232407" duration="6416000" />
+      <workItem from="1575303381222" duration="8561000" />
+      <workItem from="1575398401261" duration="9629000" />
+      <workItem from="1575466196717" duration="20545000" />
+      <workItem from="1575580281678" duration="8749000" />
+      <workItem from="1575665183786" duration="1200000" />
+      <workItem from="1575733952187" duration="13118000" />
+      <workItem from="1575824930981" duration="3064000" />
+      <workItem from="1575990479299" duration="3423000" />
+      <workItem from="1576194531125" duration="13620000" />
+      <workItem from="1576229650766" duration="7899000" />
+      <workItem from="1576293184449" duration="9458000" />
+      <workItem from="1576538218468" duration="3309000" />
+      <workItem from="1576597588503" duration="637000" />
+      <workItem from="1576829882133" duration="601000" />
+      <workItem from="1576913976609" duration="3104000" />
+      <workItem from="1577107500069" duration="2136000" />
+      <workItem from="1577277382077" duration="2414000" />
+      <workItem from="1577387082302" duration="1212000" />
+      <workItem from="1577402476849" duration="2513000" />
+      <workItem from="1577463043546" duration="21088000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <created>1574627509440</created>
@@ -191,7 +227,35 @@
       <option name="project" value="LOCAL" />
       <updated>1575085216945</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Create round color picker">
+      <created>1575132439567</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1575132439567</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Create brightness column">
+      <created>1575333906658</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1575333906658</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Make mousemove event global">
+      <created>1575498335417</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1575498335417</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Fix issue with black drawing color">
+      <created>1575520698637</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1575520698638</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -225,17 +289,29 @@
     <MESSAGE value="Fixed issue with artefacts" />
     <MESSAGE value="Dynamic fill color" />
     <MESSAGE value="Improve performance" />
-    <option name="LAST_COMMIT_MESSAGE" value="Improve performance" />
+    <MESSAGE value="Create round color picker" />
+    <MESSAGE value="Create brightness column" />
+    <MESSAGE value="Make mousemove event global" />
+    <MESSAGE value="Fix issue with black drawing color" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix issue with black drawing color" />
   </component>
   <component name="WindowStateProjectService">
     <state x="734" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1574964185432">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
     <state x="734" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.2560.1040@0.0.2560.1040" timestamp="1574964185432" />
-    <state x="873" y="112" key="CommitChangelistDialog2" timestamp="1575085216627">
+    <state x="1032" y="322" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1576458497844">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
-    <state x="873" y="112" key="CommitChangelistDialog2/0.0.2560.1040@0.0.2560.1040" timestamp="1575085216627" />
+    <state x="1032" y="322" key="#com.intellij.fileTypes.FileTypeChooser/0.0.2560.1040@0.0.2560.1040" timestamp="1576458497844" />
+    <state x="1010" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1576224003160">
+      <screen x="0" y="0" width="2560" height="1040" />
+    </state>
+    <state x="1010" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.2560.1040@0.0.2560.1040" timestamp="1576224003160" />
+    <state x="873" y="112" key="CommitChangelistDialog2" timestamp="1575520698198">
+      <screen x="0" y="0" width="2560" height="1040" />
+    </state>
+    <state x="873" y="112" key="CommitChangelistDialog2/0.0.2560.1040@0.0.2560.1040" timestamp="1575520698198" />
     <state x="92" y="92" width="2376" height="856" key="DiffContextDialog" timestamp="1575131201766">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
@@ -308,9 +384,17 @@
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
     <state x="1009" y="230" key="RollbackChangesDialog/0.0.2560.1040@0.0.2560.1040" timestamp="1575035842463" />
-    <state x="366" y="165" width="1142" height="716" key="SettingsEditor" timestamp="1575118288398">
+    <state x="366" y="165" width="1142" height="716" key="SettingsEditor" timestamp="1575213926756">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
-    <state x="366" y="165" width="1142" height="716" key="SettingsEditor/0.0.2560.1040@0.0.2560.1040" timestamp="1575118288398" />
+    <state x="366" y="165" width="1142" height="716" key="SettingsEditor/0.0.2560.1040@0.0.2560.1040" timestamp="1575213926756" />
+    <state x="872" y="252" key="Vcs.Push.Dialog.v2" timestamp="1575520699662">
+      <screen x="0" y="0" width="2560" height="1040" />
+    </state>
+    <state x="872" y="252" key="Vcs.Push.Dialog.v2/0.0.2560.1040@0.0.2560.1040" timestamp="1575520699662" />
+    <state x="1089" y="436" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1577547318323">
+      <screen x="0" y="0" width="2560" height="1040" />
+    </state>
+    <state x="1089" y="436" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.2560.1040@0.0.2560.1040" timestamp="1577547318323" />
   </component>
 </project>
