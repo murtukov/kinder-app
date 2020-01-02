@@ -103,28 +103,25 @@ class Canvas extends Component {
     };
 
     drawStamp = (e) => {
-        const size = this.props.stampSize;
+        const size = this.props.size;
         const img = new Image;
-
-        // ----------------------------------
-        const request = new XMLHttpRequest();
-        request.open("GET", getCurrentStamp(this.props.currentStamp));
-        request.setRequestHeader("Content-Type", "image/svg+xml");
-        request.addEventListener("load", function(event) {
-            const src = this.responseText.split('black').join('red');
-            img.src = "data:image/svg+xml;charset=utf-8," + src;
-        });
-        request.send();
-        // -----------------------------------
-
 
         img.onload = () => {
             this.ctx.drawImage(img, e.offsetX - (size / 2), e.offsetY - (size / 2), size, size);
-        }
+        };
+
+        const request = new XMLHttpRequest();
+        request.open("GET", getCurrentStamp(this.props.currentStamp));
+        request.setRequestHeader("Content-Type", "image/svg+xml");
+        request.addEventListener("load", (e) => {
+            const svg = e.target.response.split('black').join(this.props.color);
+            img.src = "data:image/svg+xml;charset=utf-8," + svg;
+        });
+        request.send();
     };
 
     drawStampCursor = (e) => {
-        const size = this.props.stampSize;
+        const size = this.props.size;
         const ctx = this.layerRef.current.getContext('2d');
 
         ctx.clearRect(0, 0, Canvas.width, Canvas.height);
@@ -151,6 +148,7 @@ class Canvas extends Component {
 
             this.growRegion(seedPxl, region, pixelsToCheck, ctx, ctx.getImageData(e.offsetX, e.offsetY, 1, 1).data);
             this.fillRegion(region);
+            this.props.persistStep()
         }
     };
 

@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c8c4da77-0cfb-42fe-9cfa-4aaf9cbeaeaa" name="Default Changelist" comment="Create round color picker">
-      <change afterPath="$PROJECT_DIR$/src/Canvas/ColorPicker/ColorPickerContainer.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Canvas/ColorPicker/model.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Canvas/helpers.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/paint-bucket.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/pencil.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/stamps/cloud.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/stamps/flash.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/stamps/heart.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/stamps/planet.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/stamps/star.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/stamps/star2.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/stamps/sun.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/stamps/sun2.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/turtle.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/helpers.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/model.js" afterDir="false" />
+    <list default="true" id="c8c4da77-0cfb-42fe-9cfa-4aaf9cbeaeaa" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/Dashboard/Dashboard.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Dashboard/styles.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/dashboard/SeekPng.com_christmas-cat-png_4004694.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/dashboard/chameleon2.gif" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/dashboard/clown.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/dashboard/dragonfly6.gif" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/dashboard/iguana3.gif" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/dashboard/scene.gif" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/dashboard/seahorse2.gif" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Canvas/Canvas.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Canvas/Canvas.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Canvas/ColorPicker/ColorPicker.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Canvas/ColorPicker/ColorPicker.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Canvas/styles.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Canvas/styles.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assets/stamps/cloud.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/assets/stamps/cloud.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assets/stamps/flash.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/assets/stamps/flash.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assets/stamps/heart.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/assets/stamps/heart.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assets/stamps/star.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/assets/stamps/star.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assets/stamps/star2.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/assets/stamps/star2.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assets/stamps/sun.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/assets/stamps/sun.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assets/stamps/sun2.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/assets/stamps/sun2.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/helpers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/helpers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +51,7 @@
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/assets/stamps" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/assets/dashboard" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -61,12 +61,13 @@
     <property name="ts.external.directory.path" value="C:\Users\TimurMurtukov\AppData\Local\JetBrains\Toolbox\apps\WebStorm\ch-0\193.5662.54\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\TimurMurtukov\Desktop\Einführung in Multimedia\kinder-app\src\assets\stamps" />
-      <recent name="C:\Users\TimurMurtukov\Desktop\Einführung in Multimedia\kinder-app\src\assets" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\TimurMurtukov\Desktop\Einführung in Multimedia\kinder-app\src\Canvas" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\TimurMurtukov\Desktop\Einführung in Multimedia\kinder-app\src\assets\dashboard" />
+      <recent name="C:\Users\TimurMurtukov\Desktop\Einführung in Multimedia\kinder-app\src\assets\stamps" />
+      <recent name="C:\Users\TimurMurtukov\Desktop\Einführung in Multimedia\kinder-app\src\assets" />
     </key>
   </component>
   <component name="RunManager" selected="JavaScript Debug.React">
@@ -141,7 +142,7 @@
       <workItem from="1577277382077" duration="2414000" />
       <workItem from="1577387082302" duration="1212000" />
       <workItem from="1577402476849" duration="2513000" />
-      <workItem from="1577463043546" duration="21088000" />
+      <workItem from="1577463043546" duration="47298000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <created>1574627509440</created>
@@ -255,7 +256,14 @@
       <option name="project" value="LOCAL" />
       <updated>1575520698638</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Working stamps">
+      <created>1577634877661</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1577634877661</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -293,7 +301,8 @@
     <MESSAGE value="Create brightness column" />
     <MESSAGE value="Make mousemove event global" />
     <MESSAGE value="Fix issue with black drawing color" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix issue with black drawing color" />
+    <MESSAGE value="Working stamps" />
+    <option name="LAST_COMMIT_MESSAGE" value="Working stamps" />
   </component>
   <component name="WindowStateProjectService">
     <state x="734" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1574964185432">
@@ -308,10 +317,10 @@
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
     <state x="1010" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.2560.1040@0.0.2560.1040" timestamp="1576224003160" />
-    <state x="873" y="112" key="CommitChangelistDialog2" timestamp="1575520698198">
+    <state x="873" y="112" key="CommitChangelistDialog2" timestamp="1577634876985">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
-    <state x="873" y="112" key="CommitChangelistDialog2/0.0.2560.1040@0.0.2560.1040" timestamp="1575520698198" />
+    <state x="873" y="112" key="CommitChangelistDialog2/0.0.2560.1040@0.0.2560.1040" timestamp="1577634876985" />
     <state x="92" y="92" width="2376" height="856" key="DiffContextDialog" timestamp="1575131201766">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
@@ -388,10 +397,10 @@
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
     <state x="366" y="165" width="1142" height="716" key="SettingsEditor/0.0.2560.1040@0.0.2560.1040" timestamp="1575213926756" />
-    <state x="872" y="252" key="Vcs.Push.Dialog.v2" timestamp="1575520699662">
+    <state x="872" y="252" key="Vcs.Push.Dialog.v2" timestamp="1577634881471">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
-    <state x="872" y="252" key="Vcs.Push.Dialog.v2/0.0.2560.1040@0.0.2560.1040" timestamp="1575520699662" />
+    <state x="872" y="252" key="Vcs.Push.Dialog.v2/0.0.2560.1040@0.0.2560.1040" timestamp="1577634881471" />
     <state x="1089" y="436" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1577547318323">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>

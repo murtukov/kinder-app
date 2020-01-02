@@ -2,8 +2,7 @@ import React from 'react';
 import Canvas from "./Canvas/Canvas";
 import withStyles from 'react-jss';
 import ColorPicker from "./Canvas/ColorPicker/ColorPicker";
-import {Button, Slider, Card, Intent, Divider, Popover, Classes} from "@blueprintjs/core";
-import turtle from "./assets/turtle.svg";
+import {Button, Slider, Card, Intent, Divider, Popover, Tooltip, Position} from "@blueprintjs/core";
 import {modes} from "./Canvas/Canvas";
 import {Grid} from "@material-ui/core";
 import pencil from '../src/assets/pencil.png'
@@ -15,7 +14,9 @@ import sun from '../src/assets/stamps/sun.svg'
 import sun2 from '../src/assets/stamps/sun2.svg'
 import star from '../src/assets/stamps/star.svg'
 import star2 from '../src/assets/stamps/star2.svg'
-import {getCurrentStamp} from "./helpers";
+import flash from '../src/assets/stamps/flash.svg'
+import ballerina from './assets/dashboard/balerina.png'
+import {getCurrentStamp, resolvePicture} from "./helpers";
 import {POPOVER_DISMISS} from "@blueprintjs/core/lib/cjs/common/classes";
 
 
@@ -28,7 +29,8 @@ class App extends React.Component {
         prevSteps: [],
         nextSteps: [],
         currentStamp: 'heart',
-        stampSize: 16
+        stampSize: 16,
+        color: 'black',
     };
 
     setRef = (ref) => {
@@ -39,6 +41,7 @@ class App extends React.Component {
         const ctx = this.canvas.getContext('2d');
         ctx.strokeStyle = color;
         ctx.fillStyle = color;
+        this.setState({...this.state, color});
     };
 
     setWidth(width = 1) {
@@ -93,6 +96,27 @@ class App extends React.Component {
         }
     };
 
+    componentDidMount() {
+        const {match} = this.props;
+
+        const img = new Image;
+        img.src = resolvePicture(match.params.name);
+
+        img.onload = () => {
+            const aspectRatio = img.width / img.height;
+            let newWidth = 0;
+            let newHeight = 0;
+
+            if (img.width > img.height) {
+                newHeight = (Canvas.width / aspectRatio);
+                this.ctx.drawImage(img, (Canvas.width / 2) - (Canvas.width/2), (Canvas.height / 2) - (newHeight / 2), Canvas.width, newHeight);
+            } else {
+                newWidth = Canvas.height * aspectRatio;
+                this.ctx.drawImage(img, (Canvas.width / 2) - (newWidth/2), (Canvas.height / 2) - (Canvas.height / 2), newWidth, Canvas.height);
+            }
+        };
+    }
+
     renderStamps(c) {
         return (
             <div style={{padding: 15}}>
@@ -124,15 +148,9 @@ class App extends React.Component {
                     <img src={star2} className={c.stampImg} alt='star2'/>
                 </Button>
 
-                <Slider
-                    initialValue={1}
-                    stepSize={16}
-                    onChange={val => this.setStampSize(val)}
-                    min={16}
-                    max={128}
-                    value={this.state.stampSize}
-                    labelRenderer={false}
-                />
+                <Button onClick={this.setStamp('flash')} className={POPOVER_DISMISS}>
+                    <img src={flash} className={c.stampImg} alt='flash'/>
+                </Button>
             </div>
         );
     }
@@ -144,11 +162,12 @@ class App extends React.Component {
         });
     };
 
-    setStampSize = (size) => {
-        this.setState({
-            ...this.state,
-            stampSize: size
-        });
+    saveImage = () => { console.log("saving");
+        const image = this.canvas.toDataURL("image/png", 1.0).replace("image/png", "image/octet-stream");
+        const link = document.createElement('a');
+        link.download = "my-image.png";
+        link.href = image;
+        link.click();
     };
 
     render() {
@@ -159,35 +178,41 @@ class App extends React.Component {
                 <Grid item>
                     <Card style={{display: 'flex', flexDirection: 'column'}} elevation={2}>
                         <Grid container>
-                            <Grid item justify='space-between'>
-                                <Button
-                                    onClick={() => this.setMode(modes.DRAW)}
-                                    active={this.state.mode === modes.DRAW}
-                                    className={c.button}
-                                >
-                                    <img src={pencil} alt='pencil-icon'/>
-                                </Button>
-                                <Button
-                                    onClick={() => this.setMode(modes.FILL)}
-                                    active={this.state.mode === modes.FILL}
-                                    mode={this.state.mode}
-                                    className={c.button}
-                                >
-                                    <img src={bucket} alt='bucket-icon'/>
-                                </Button>
+                            <Grid item>
+                                <Tooltip content='Pen'>
+                                    <Button
+                                        onClick={() => this.setMode(modes.DRAW)}
+                                        active={this.state.mode === modes.DRAW}
+                                        className={c.button}
+                                    >
+                                        <img src={pencil} alt='pencil-icon'/>
+                                    </Button>
+                                </Tooltip>
+                                <Tooltip content='Fill'>
+                                    <Button
+                                        onClick={() => this.setMode(modes.FILL)}
+                                        active={this.state.mode === modes.FILL}
+                                        mode={this.state.mode}
+                                        className={c.button}
+                                    >
+                                        <img src={bucket} alt='bucket-icon'/>
+                                    </Button>
+                                </Tooltip>
                                 <Popover
                                     content={this.renderStamps(c)}
                                     onOpening={() => this.setMode(modes.STAMP)}
                                 >
-                                    <Button
-                                        className={c.button}
-                                        active={this.state.mode === modes.STAMP}
-                                    >
-                                        <img
-                                            src={getCurrentStamp(this.state.currentStamp)}
-                                            className={c.stampImg} alt='stamp'
-                                        />
-                                    </Button>
+                                    <Tooltip content='Stamp'>
+                                        <Button
+                                            className={c.button}
+                                            active={this.state.mode === modes.STAMP}
+                                        >
+                                            <img
+                                                src={getCurrentStamp(this.state.currentStamp)}
+                                                className={c.stampImg} alt='stamp'
+                                            />
+                                        </Button>
+                                    </Tooltip>
                                 </Popover>
                             </Grid>
                         </Grid>
@@ -196,18 +221,39 @@ class App extends React.Component {
 
                         <Grid container>
                             <Grid item>
-                                <Button icon='undo' onClick={this.prevStep} className={c.button}/>
-                                <Button icon='redo' className={c.button}/>
+                                <Tooltip content='Undo' position={Position.BOTTOM}>
+                                    <Button
+                                        icon='undo'
+                                        onClick={this.prevStep}
+                                        className={c.button}
+                                    />
+                                </Tooltip>
+                                <Tooltip content='Redo' position={Position.BOTTOM}>
+                                    <Button
+                                        icon='redo'
+                                        className={c.button}
+                                    />
+                                </Tooltip>
+                                <Tooltip content='Save image' position={Position.BOTTOM}>
+                                    <Button
+                                        icon='floppy-disk'
+                                        className={c.button}
+                                        intent={Intent.PRIMARY}
+                                        onClick={this.saveImage}
+                                    />
+                                </Tooltip>
                             </Grid>
                         </Grid>
 
                         <Divider/>
 
-                        <Button
-                            onClick={this.clear}
-                            icon='trash'
-                            intent={Intent.WARNING}
-                        />
+                        <Tooltip content='Clean canvas'>
+                            <Button
+                                onClick={this.clear}
+                                icon='trash'
+                                intent={Intent.WARNING}
+                            />
+                        </Tooltip>
                     </Card>
                 </Grid>
 
@@ -218,14 +264,17 @@ class App extends React.Component {
                         persistStep={this.persistStep}
                         currentStamp={this.state.currentStamp}
                         stampSize={this.state.stampSize}
+                        color={this.state.color}
+                        size={this.state.lineWidth}
                     />
-                    <div style={{width: 300}}>
+                    <div style={{width: 800}}>
                         <Slider
                             initialValue={1}
                             stepSize={1}
+                            labelStepSize={5}
                             onChange={val => this.setWidth(val)}
                             min={1}
-                            max={20}
+                            max={100}
                             value={this.state.lineWidth}
                         />
                     </div>
