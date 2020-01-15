@@ -1,6 +1,7 @@
 export default {
     root: {
-        width: 700
+        width: 700,
+        margin: 'auto',
     },
     tile: {
         width: 100,
