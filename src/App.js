@@ -15,7 +15,6 @@ import sun2 from '../src/assets/stamps/sun2.svg'
 import star from '../src/assets/stamps/star.svg'
 import star2 from '../src/assets/stamps/star2.svg'
 import flash from '../src/assets/stamps/flash.svg'
-import ballerina from './assets/dashboard/balerina.png'
 import {getCurrentStamp, resolvePicture} from "./helpers";
 import {POPOVER_DISMISS} from "@blueprintjs/core/lib/cjs/common/classes";
 
@@ -66,6 +65,8 @@ class App extends React.Component {
         this.ctx.fillRect(0, 0, this.canvasRef.current.width, this.canvasRef.current.height);
 
         this.ctx.fillStyle = prevColor;
+
+        this.drawSkeleton();
     };
 
     setMode = (mode) => {
@@ -96,7 +97,11 @@ class App extends React.Component {
         }
     };
 
-    componentDidMount() {
+    componentDidMount = () => {
+        this.drawSkeleton();
+    };
+
+    drawSkeleton = () => {
         const {match} = this.props;
 
         const img = new Image;
@@ -115,7 +120,7 @@ class App extends React.Component {
                 this.ctx.drawImage(img, (Canvas.width / 2) - (newWidth/2), (Canvas.height / 2) - (Canvas.height / 2), newWidth, Canvas.height);
             }
         };
-    }
+    };
 
     renderStamps(c) {
         return (

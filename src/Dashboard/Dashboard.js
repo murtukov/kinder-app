@@ -23,7 +23,6 @@ import house from '../assets/dashboard/house.jpg'
 import iguana from '../assets/dashboard/iguana3.jpg'
 import mickeyMouse from '../assets/dashboard/mickey-mouse.jpg'
 import pigAndMonkey from '../assets/dashboard/pig_and_mokey.jpg'
-import acne from '../assets/dashboard/scene.jpg'
 
 const Dashboard = ({classes: c, history}) => {
     const go = url => () => {
@@ -151,12 +150,6 @@ const Dashboard = ({classes: c, history}) => {
                 <Button onClick={go('/workspace/pigAndMonkey')}>
                     <img src={pigAndMonkey} className={c.tile}/>
                     <div>Pig and Monkey</div>
-                </Button>
-            </Grid>
-            <Grid item>
-                <Button onClick={go('/workspace/acne')}>
-                    <img src={acne} className={c.tile}/>
-                    <div>Acne</div>
                 </Button>
             </Grid>
         </Grid>
